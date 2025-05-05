@@ -176,3 +176,5 @@ cython_debug/
 
 
 scratch.txt
+
+**/*.sarif

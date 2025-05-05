@@ -2,6 +2,7 @@ from dotenv import dotenv_values
 import jwt
 import requests
 import base64
+import traceback
 
 def _valid_tokens(id_token: str, access_token: str, client_id: str, jwks_client, oidc_config, verify_expiration=True) -> bool:
 
@@ -10,6 +11,7 @@ def _valid_tokens(id_token: str, access_token: str, client_id: str, jwks_client,
         signing_key = jwks_client.get_signing_key_from_jwt(id_token)
     except jwt.exceptions.DecodeError as decodeError:
         print(f"{decodeError}") 
+        # traceback.print_exc()
         return False
 
     try:
@@ -22,6 +24,7 @@ def _valid_tokens(id_token: str, access_token: str, client_id: str, jwks_client,
         )
     except jwt.exceptions.ExpiredSignatureError as e:
         print(f"{e}")
+        # traceback.print_exc()
         return False
 
     header, payload = data["header"], data["payload"]
