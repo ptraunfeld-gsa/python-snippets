@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch, MagicMock, Mock
 from dotenv import dotenv_values
-from validate_jwt import valid_tokens
+from validate_jwt import validate_tokens
 import json
 import requests
 import jwt
@@ -104,9 +104,9 @@ class TestValidateJwt(unittest.TestCase):
         # oidc_config_url="https://accounts.google.com/.well-known/openid-configuration"
         oidc_config_url="https://example.com/.well-known/openid-configuration"
         with patch.object(jwt.PyJWKClient, 'get_signing_key_from_jwt', return_value=test_signing_key) as mock_get_signing_key:
-            result = valid_tokens(id_token, access_token, client_id, jwks_url, oidc_config_url, False)
+            validate_tokens(id_token, access_token, client_id, jwks_url, oidc_config_url, False)
         
-        self.assertTrue(result)
+        # self.assertTrue(result)
 
 
     def test_validate_jwt_valid_no_verify_exp(self):
@@ -116,8 +116,7 @@ class TestValidateJwt(unittest.TestCase):
         client_id = env["CLIENT_ID"]
         jwks_url="https://www.googleapis.com/oauth2/v3/certs"
         oidc_config_url="https://accounts.google.com/.well-known/openid-configuration"
-        result = valid_tokens(id_token, access_token, client_id, jwks_url, oidc_config_url, False)
-        self.assertTrue(result)
+        validate_tokens(id_token, access_token, client_id, jwks_url, oidc_config_url, False)
 
     def test_validate_jwt_invalid_expired(self):
         env = dotenv_values(".env")
@@ -126,8 +125,8 @@ class TestValidateJwt(unittest.TestCase):
         client_id = env["CLIENT_ID"]
         jwks_url="https://www.googleapis.com/oauth2/v3/certs"
         oidc_config_url="https://accounts.google.com/.well-known/openid-configuration"
-        result = valid_tokens(id_token, access_token, client_id, jwks_url, oidc_config_url, True)
-        self.assertFalse(result)
+        with self.assertRaises(jwt.exceptions.ExpiredSignatureError):
+            validate_tokens(id_token, access_token, client_id, jwks_url, oidc_config_url, True)
 
 
     def test_validate_jwt_invalid_token(self):
@@ -137,8 +136,9 @@ class TestValidateJwt(unittest.TestCase):
         client_id = env["CLIENT_ID"]
         jwks_url="https://www.googleapis.com/oauth2/v3/certs"
         oidc_config_url="https://accounts.google.com/.well-known/openid-configuration"
-        result = valid_tokens(id_token, access_token, client_id, jwks_url, oidc_config_url, False)
-        self.assertFalse(result)
+        with self.assertRaises(jwt.exceptions.InvalidTokenError):
+            validate_tokens(id_token, access_token, client_id, jwks_url, oidc_config_url, False)
+        
 
    
 
