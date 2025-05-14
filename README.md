@@ -15,3 +15,18 @@ python -m venv venv
 # Install requirements
 python -m pip install -r requirements.txt
 ```
+
+## Testing
+```sh
+# Run a test
+python -m unittest validate_jwt_test
+
+# Run all test files verbosely
+python -m unittest discover -p "*test.py" -v
+
+# Run a test with branch coverage 
+python -m coverage run --branch validate_jwt_test.py
+
+# View coverage report
+python -m coverage report 
+```
