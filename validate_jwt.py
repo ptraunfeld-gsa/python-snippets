@@ -14,12 +14,13 @@ def _validate_tokens(id_token: str, access_token: str, client_id: str, jwks_clie
 
     signing_algos = oidc_config["id_token_signing_alg_values_supported"]
     signing_key = jwks_client.get_signing_key_from_jwt(id_token)
-   
+    
     data = jwt.decode_complete(
         id_token,
         key=signing_key,
         audience=client_id,
         options={"verify_exp": verify_expiration},
+        # options={"verify_exp": verify_expiration, "verify_aud": False},
         algorithms=signing_algos
     )
 
@@ -29,13 +30,15 @@ def _validate_tokens(id_token: str, access_token: str, client_id: str, jwks_clie
     d = digest[: (len(digest) // 2)]
     at_hash = base64.urlsafe_b64encode(d)
     at_hash = at_hash.rstrip(b"=").decode()
-
+    # print(f"aud: {payload['aud']}")
     if at_hash != payload["at_hash"]:
+        # print(f"at_hash: {at_hash}")
+        # print(f"payload[at_hash]: {payload['at_hash']}")
         raise AccessTokenHashMismatchError("Access Token Hash does not match at_hash in the Identity JWT")
 
-def validate_tokens(id_token: str, 
-    access_token: str, 
-    client_id: str, 
+def validate_tokens(id_token: str,
+    access_token: str,
+    client_id: str,
     jwks_url="https://www.googleapis.com/oauth2/v3/certs", 
     oidc_config_url="https://accounts.google.com/.well-known/openid-configuration", 
     verify_expiration=True):
