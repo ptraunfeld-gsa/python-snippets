@@ -17,8 +17,8 @@ name: FOD RUN SAST
 
 # Customize trigger events based on your DevSecOps process and/or policy
 on:
-  # push:
-    # branches: [ "main" ]
+  push:
+    branches: [ "fod-scan" ]
  # pull_request:
     # The branches below must be a subset of the branches above
  #   branches: [ "main" ]
