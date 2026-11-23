@@ -37,7 +37,7 @@ if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("not enough args")
         sys.exit(1)
-
+    
     filename = Path(sys.argv[1])
     with open(filename, 'r', encoding='utf-8') as f:
         bookmarks = json.load(f)
