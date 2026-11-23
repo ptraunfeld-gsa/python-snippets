@@ -178,3 +178,7 @@ cython_debug/
 scratch.txt
 
 **/*.sarif
+**/*.json
+
+**/*.html
+**/*.csv
